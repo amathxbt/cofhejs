@@ -133,6 +133,8 @@ export const removePermit = (
           if (!force) {
             throw new Error("Cannot remove the last permit without force flag");
           }
+          // Clear the stale active permit hash since no other permits remain
+          state.activePermitHash[chainId][account] = undefined;
         }
       }
       // Remove the permit

@@ -137,7 +137,7 @@ export class EncryptInputsBuilder<T extends any[]> {
   async encrypt(): Promise<Result<[...Encrypted_Inputs<T>]>> {
     try {
       if (this.isTestnet) {
-        return this.mockEncrypt();
+        return await this.mockEncrypt();
       }
     } catch (error) {
       return ResultErrOrInternal(error);

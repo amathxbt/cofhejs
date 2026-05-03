@@ -127,7 +127,7 @@ type SdkStoreSignerInitialization =
 
 export type KeysStore = {
   fhe: ChainRecord<SecurityZoneRecord<Uint8Array | undefined>>;
-  crs: ChainRecord<Uint8Array | undefined>;
+  crs: ChainRecord<SecurityZoneRecord<Uint8Array | undefined>>;
 };
 
 export const _keysStore = createStore<KeysStore>()(
@@ -214,9 +214,9 @@ export const _store_getConnectedChainFheKey = (securityZone = 0) => {
   return stored ? ensureUint8Array(stored) : undefined;
 };
 
-export const _store_getCrs = (chainId: string | undefined) => {
+export const _store_getCrs = (chainId: string | undefined, securityZone = 0) => {
   if (chainId == null) return undefined;
-  const stored = _keysStore.getState().crs[chainId];
+  const stored = _keysStore.getState().crs[chainId]?.[securityZone];
   return stored ? ensureUint8Array(stored) : undefined;
 };
 
@@ -442,7 +442,8 @@ export const _store_fetchKeys = async (
     produce<KeysStore>((state) => {
       if (state.fhe[chainId] == null) state.fhe[chainId] = {};
       state.fhe[chainId][securityZone] = pk_buff;
-      state.crs[chainId] = crs_buff;
+      if (state.crs[chainId] == null) state.crs[chainId] = {};
+      state.crs[chainId][securityZone] = crs_buff;
     }),
   );
 };

@@ -315,10 +315,14 @@ export const _store_initialize = async (params: InitializationParams) => {
     });
   }
 
-  // If chainId, securityZones, or CoFhe enabled changes, update the store and update fheKeys for re-initialization
+  // If chainId, securityZones, or coFheUrl changes, update the store and trigger fheKey re-initialization
+  const currentState = _sdkStore.getState();
+  const currentSecurityZones = currentState.securityZones;
   const securityZonesChanged =
-    securityZones !== _sdkStore.getState().securityZones;
-  if (chainIdChanged || securityZonesChanged) {
+    securityZones.length !== currentSecurityZones.length ||
+    securityZones.some((z, i) => z !== currentSecurityZones[i]);
+  const coFheUrlChanged = coFheUrl !== currentState.coFheUrl;
+  if (chainIdChanged || securityZonesChanged || coFheUrlChanged) {
     _sdkStore.setState({
       securityZones,
       fheKeysInitialized: false,

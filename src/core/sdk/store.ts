@@ -316,8 +316,10 @@ export const _store_initialize = async (params: InitializationParams) => {
   }
 
   // If chainId, securityZones, or CoFhe enabled changes, update the store and update fheKeys for re-initialization
+  const currentSecurityZones = _sdkStore.getState().securityZones;
   const securityZonesChanged =
-    securityZones !== _sdkStore.getState().securityZones;
+    securityZones.length !== currentSecurityZones.length ||
+    securityZones.some((z, i) => z !== currentSecurityZones[i]);
   if (chainIdChanged || securityZonesChanged) {
     _sdkStore.setState({
       securityZones,
